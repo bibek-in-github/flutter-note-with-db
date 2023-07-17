@@ -27,4 +27,25 @@ class DatabaseHelper {
         whereArgs: [note.id],
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
+
+  static Future<int> deleteNote(Note note) async {
+    final db = await _getDB();
+    return await db.delete(
+      "Note",
+      where: 'id = ?',
+      whereArgs: [note.id],
+    );
+  }
+
+  static Future<List<Note>?> getAllNote() async {
+    final db = await _getDB();
+
+    final List<Map<String, dynamic>> maps = await db.query("Note");
+
+    if (maps.isEmpty) {
+      return null;
+    }
+
+    return List.generate(maps.length, (index) => Note.fromJson(maps[index]));
+  }
 }
